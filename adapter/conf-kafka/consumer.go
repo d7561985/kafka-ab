@@ -11,6 +11,8 @@ import (
 
 type consumer struct {
 	srv *kafka.Consumer
+
+	group string
 }
 
 func NewConsumer(c Config) *consumer {
@@ -19,10 +21,12 @@ func NewConsumer(c Config) *consumer {
 		host = "common"
 	}
 
+	group := fake.FullName()
+
 	conf := kafka.ConfigMap{
 		"bootstrap.servers":               c.BootStrap,
 		"session.timeout.ms":              6000,
-		"group.id":                        fake.FullName(),
+		"group.id":                        group,
 		"group.instance.id":               host,
 		"auto.offset.reset":               "earliest", //earliest/latest
 		"enable.auto.commit":              true,
@@ -36,7 +40,7 @@ func NewConsumer(c Config) *consumer {
 		log.Fatalf("kafka:consumer start error: %s", err)
 	}
 
-	return &consumer{srv: p}
+	return &consumer{srv: p, group: group}
 }
 
 func (s *consumer) Subscribe(ctx context.Context, topic string) <-chan events.EventResponse {
@@ -45,7 +49,8 @@ func (s *consumer) Subscribe(ctx context.Context, topic string) <-chan events.Ev
 		log.Fatalf("kafka:consumer subscribe error: %s", err)
 	}
 
-	log.Printf("consumer listen: %v", topic)
+	log.Printf("consumer[group: %s] listen: %v",
+		s.group, topic)
 
 	// first part of getting all partition offsets
 	//metadata, err := s.p.GetMetadata(&topic, false, 10000)
@@ -76,7 +81,7 @@ func (s *consumer) Subscribe(ctx context.Context, topic string) <-chan events.Ev
 			case m := <-s.srv.Events():
 				switch e := m.(type) {
 				case kafka.AssignedPartitions:
-					//log.Printf("AssignedPartitions")
+					//log.Printf("AssignedPartitions: %s", m.String())
 
 					if err := s.srv.Assign(e.Partitions); err != nil {
 						log.Printf("a err: %s", err)

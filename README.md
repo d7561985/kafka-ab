@@ -1,5 +1,6 @@
 # Kafka benchmark
 `Producer` helps produce a big number of system messages simultaneously to all partitions. Every message waits response with successful emitting to broker.
+`Consumer` - read provided topic with unit group per thread with auto-commit option.
 
 ### from what to start
 assume that we have topic with 50 partitions and some replicas

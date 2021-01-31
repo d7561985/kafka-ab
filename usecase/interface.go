@@ -6,5 +6,5 @@ import (
 )
 
 type SuperConsumer interface {
-	Register(context.Context, <- chan events.EventResponse)
+	Register(context.Context, []<-chan events.EventResponse)
 }
