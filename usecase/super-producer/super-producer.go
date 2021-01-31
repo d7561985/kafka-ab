@@ -3,10 +3,10 @@ package super_producer
 import (
 	"context"
 	"crypto/rand"
+	"github.com/icrowley/fake"
 	"kafka-bench/adapter"
 	human_readable "kafka-bench/internal/human-readable"
 	"log"
-	"os"
 	"time"
 )
 
@@ -76,14 +76,12 @@ func (p *producer) work(ctx context.Context, counter *uint) {
 }
 
 func (p *producer) do(v []byte) error {
-	host, err := os.Hostname()
-	if err != nil {
-		log.Fatalf("get host name in producer: %s", err)
-	}
+	// rand key send to rand partition ;)
+	key := fake.UserName()
 
-	if err := p.emitter.Emit(p.topic, []byte(host), v); err != nil {
+	if err := p.emitter.Emit(p.topic, []byte(key), v); err != nil {
 		log.Printf("[ERROR]: emit topic %q key %q error: %s",
-			p.topic, host, err)
+			p.topic, key, err)
 		return err
 	}
 
