@@ -7,11 +7,6 @@ import (
 	super_consumer "kafka-bench/usecase/super-consumer"
 )
 
-const (
-	fTopic       = "topic"
-	fKafkaServer = "kafka-server"
-)
-
 type consumerCMD struct{}
 
 func ConsumerCMD() *cli.Command {
@@ -28,24 +23,24 @@ func (c *consumerCMD) Command() *cli.Command {
 			&cli.StringFlag{
 				Name:    fTopic,
 				Value:   "my-topic",
-				EnvVars: []string{"TOPIC"},
+				EnvVars: []string{Topic},
 			},
 			&cli.StringFlag{
 				Name:    fKafkaServer,
 				Value:   "127.0.0.1:9094",
-				EnvVars: []string{"KAFKA_SERVER"},
+				EnvVars: []string{KafkaBootstrap},
 			},
 			&cli.IntFlag{
-				Name:    fThreads,
+				Name:    fConcurrency,
 				Value:   10,
-				EnvVars: []string{"THREADS"},
+				EnvVars: []string{Concurrency},
 			},
 		},
 	}
 }
 
 func (c *consumerCMD) Action(ctx *cli.Context) error {
-	threads := ctx.Int(fThreads)
+	threads := ctx.Int(fConcurrency)
 	var list []<-chan events.EventResponse
 
 	for i := 0; i < threads; i++ {

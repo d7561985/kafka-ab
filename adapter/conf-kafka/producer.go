@@ -8,18 +8,22 @@ import (
 )
 
 type producer struct {
+	Config
 	srv *kafka.Producer
 }
 
 func NewProducer(c Config) adapter.Producer {
-	conf := kafka.ConfigMap{"bootstrap.servers": c.BootStrap}
+	conf := kafka.ConfigMap{
+		"bootstrap.servers":   c.BootStrap,
+		"delivery.timeout.ms": int(c.TimeOut.Milliseconds()),
+	}
 
 	p, err := kafka.NewProducer(&conf)
 	if err != nil {
 		log.Fatalf("kafka: create producer error: %s", err)
 	}
 
-	return &producer{srv: p}
+	return &producer{srv: p, Config: c}
 }
 
 func (p *producer) Emit(topic string, key []byte, body []byte) error {
@@ -43,8 +47,13 @@ func (p *producer) Emit(topic string, key []byte, body []byte) error {
 		if ev.TopicPartition.Error != nil {
 			return fmt.Errorf("producer: %s user %s failed to deliver: %v", topic, string(key), ev.TopicPartition)
 		}
+	default:
+		log.Printf("kafka producer unhandled response: %T => %[1]v", v)
 	}
 
-	//log.Printf("send topoc: %s", topic)
+	if p.Verbosity >= 2 {
+		log.Printf("send topoc: %s", topic)
+	}
+
 	return nil
 }

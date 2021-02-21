@@ -1,5 +1,9 @@
 package conf_kafka
 
-type Config struct{
+import "time"
+
+type Config struct {
 	BootStrap string
+	TimeOut   time.Duration
+	Verbosity int
 }
