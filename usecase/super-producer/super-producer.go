@@ -4,20 +4,22 @@ import (
 	"context"
 	"crypto/rand"
 	"fmt"
-	"github.com/icrowley/fake"
 	"kafka-bench/adapter"
 	human_readable "kafka-bench/internal/human-readable"
 	"log"
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"github.com/icrowley/fake"
 )
 
 type producer struct {
 	Config
-	emitter        adapter.Producer
-	messagesNumber int64
-	done           chan struct{}
+	emitter          adapter.Producer
+	messagesNumber   int64
+	completeMessages int64
+	done             chan struct{}
 }
 
 func New(e adapter.Producer, c Config) *producer {
@@ -61,7 +63,7 @@ func (p *producer) Run(ctx context.Context) {
 
 	wg.Wait()
 
-	log.Printf("successfully priduced %d messages", p.messagesNumber)
+	log.Printf("successfully produced %d messages", p.messagesNumber)
 	p.done <- struct{}{}
 }
 
@@ -75,8 +77,8 @@ func (p *producer) timerInfo(ctx context.Context) {
 				break
 			}
 
-			var total = p.messagesNumber * int64(p.WindowSize)
-			log.Println("msg:", p.messagesNumber, "total size:", human_readable.ByteCountSI(total))
+			var total = p.completeMessages * int64(p.WindowSize)
+			log.Println("msg:", p.completeMessages, "total size:", human_readable.ByteCountSI(total))
 		}
 	}
 }
@@ -102,7 +104,10 @@ func (p *producer) work(ctx context.Context) {
 
 			if p.do(buf[:n]) != nil {
 				atomic.AddInt64(&p.messagesNumber, -1)
+				continue
 			}
+
+			atomic.AddInt64(&p.completeMessages, 1)
 		}
 	}
 }
