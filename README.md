@@ -1,4 +1,4 @@
-# Kafka benchmark
+# Kafka-AB
 `Producer` helps produce a big number of system messages simultaneously to all partitions. Every message waits response with successful emitting to broker.
 
 `Consumer` - read provided topic with unit group per thread with auto-commit option.
@@ -34,3 +34,15 @@ spec:
     segment.bytes: 1073741824
 ```
 for test topic try to use small retention time as log is filled very significantly
+
+
+### Use cases 
+Application exits with status 1 when it can't meet some target. 
+
+For example: consumer don't read any message or consumer not reads desired requests number which helps to perform some CI tests ;) 
+#### Consumer
+* `--timelimit` if any of consumer not read any message at the and of limit will exit with status 1
+* `--requests` exit with status 0 when request meat desired number, but if timelimit comes - status will be 1  
+* Concurrent (`--concurrency`) consumer with the force name (`--force-name`) - one group reads from different  partitions
+* `--static` every run consumers will have the same name. This helps to check auto-commit option for example
+* ` --earliest` option allow to deside do you need read from the start of just new income. Set false to read new income only. 

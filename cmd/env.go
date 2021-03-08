@@ -10,4 +10,7 @@ const (
 	TimeOut        = "TIME_OUT"
 	Verbosity      = "VERBOSITY"
 	ForceName      = "FORCE_NAME"
+	Static         = "STATIC"
+	AutoCommit     = "AUTO_COMMIT"
+	EARLIEST       = "EARLIEST"
 )

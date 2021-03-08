@@ -75,6 +75,7 @@ func (p *producerCMD) Command() *cli.Command {
 			&cli.IntFlag{
 				Name:        fVerbosity,
 				EnvVars:     []string{Verbosity},
+				Aliases:     []string{"v"},
 				Value:       0,
 				DefaultText: "How much troubleshooting info to print",
 			},

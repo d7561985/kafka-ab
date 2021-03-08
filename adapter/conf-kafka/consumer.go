@@ -2,6 +2,7 @@ package conf_kafka
 
 import (
 	"context"
+	"fmt"
 	"kafka-bench/events"
 	"log"
 	"os"
@@ -16,7 +17,9 @@ type consumer struct {
 	group string
 }
 
-func NewConsumer(c Config) *consumer {
+func NewConsumer(i int, c Config) *consumer {
+	var instanceID string
+
 	host, err := os.Hostname()
 	if err != nil {
 		host = "common"
@@ -25,15 +28,27 @@ func NewConsumer(c Config) *consumer {
 	group := fake.FullName()
 	if len(c.ForceName) > 0 {
 		group = c.ForceName
+		instanceID = fake.FullName()
+	} else {
+		instanceID = host
+	}
+
+	if c.StaticGroupName {
+		group = fmt.Sprintf("group#%d", i)
+	}
+
+	var offset = "earliest"
+	if !c.Earliest {
+		offset = "latest"
 	}
 
 	conf := kafka.ConfigMap{
 		"bootstrap.servers":               c.BootStrap,
 		"session.timeout.ms":              6000,
 		"group.id":                        group,
-		"group.instance.id":               host,
-		"auto.offset.reset":               "earliest", //earliest/latest
-		"enable.auto.commit":              true,
+		"group.instance.id":               instanceID,
+		"auto.offset.reset":               offset,
+		"enable.auto.commit":              c.AutoCommit,
 		"go.events.channel.enable":        true,
 		"go.application.rebalance.enable": true, // app rebalance
 		"enable.partition.eof":            true, // Enable generation of PartitionEOF when the end of a partition is reached.

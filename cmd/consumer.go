@@ -58,17 +58,38 @@ func (c *consumerCMD) Command() *cli.Command {
 			&cli.IntFlag{
 				Name:        fVerbosity,
 				EnvVars:     []string{Verbosity},
+				Aliases:     []string{"v"},
 				Value:       0,
 				DefaultText: "How much troubleshooting info to print",
 			},
 			&cli.StringFlag{
 				Name:        fForceName,
 				EnvVars:     []string{ForceName},
+				Aliases:     []string{"f"},
 				Value:       "",
 				DefaultText: "all consumer's groups have the same group name which pass throughout",
 			},
-			// ToDo: static group name (all consumer's groups hase unique but static name (group-1, group-2 and group-...))
-			// ToDo: auto-commit
+			&cli.BoolFlag{
+				Name:        fStaticGroupName,
+				EnvVars:     []string{Static},
+				Aliases:     []string{"s"},
+				Value:       false,
+				DefaultText: "all consumer's groups hase unique but static name (group-1, group-2 and group-...",
+			},
+			&cli.BoolFlag{
+				Name:        fAutoCommit,
+				EnvVars:     []string{AutoCommit},
+				Aliases:     []string{"a"},
+				Value:       true,
+				DefaultText: "auto-commit option",
+			},
+			&cli.BoolFlag{
+				Name:        fEarliest,
+				EnvVars:     []string{EARLIEST},
+				Aliases:     []string{"e"},
+				Value:       true,
+				DefaultText: "read from the very beginning of log",
+			},
 		},
 	}
 }
@@ -81,10 +102,13 @@ func (c *consumerCMD) Action(root *cli.Context) error {
 	defer cancel()
 
 	for i := 0; i < threads; i++ {
-		e := conf_kafka.NewConsumer(conf_kafka.Config{
-			BootStrap: root.String(fKafkaServer),
-			Verbosity: root.Int(fVerbosity),
-			ForceName: root.String(fForceName),
+		e := conf_kafka.NewConsumer(i, conf_kafka.Config{
+			BootStrap:       root.String(fKafkaServer),
+			Verbosity:       root.Int(fVerbosity),
+			ForceName:       root.String(fForceName),
+			StaticGroupName: root.Bool(fStaticGroupName),
+			AutoCommit:      root.Bool(fAutoCommit),
+			Earliest:        root.Bool(fEarliest),
 		}).Subscribe(ctx, root.String(fTopic))
 		list = append(list, e)
 	}

@@ -75,6 +75,9 @@ func (c *consumer) printDebug(ctx context.Context) {
 	for {
 		select {
 		case <-ctx.Done():
+			if c.count == 0 {
+				log.Printf("consumer doesn't read any message")
+			}
 			return
 		case <-time.After(time.Second):
 			log.Printf("consumer: total packets: %d size of: %s", c.count, human_readable.ByteCountSI(int64(c.size)))
