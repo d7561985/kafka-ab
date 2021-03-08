@@ -2,9 +2,10 @@ package conf_kafka
 
 import (
 	"fmt"
-	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"kafka-bench/adapter"
 	"log"
+
+	"github.com/confluentinc/confluent-kafka-go/kafka"
 )
 
 type producer struct {
@@ -14,14 +15,17 @@ type producer struct {
 
 func NewProducer(c Config) adapter.Producer {
 	conf := kafka.ConfigMap{
-		"bootstrap.servers":   c.BootStrap,
-		"delivery.timeout.ms": int(c.TimeOut.Milliseconds()),
+		"bootstrap.servers":      c.BootStrap,
+		"delivery.timeout.ms":    int(c.TimeOut.Milliseconds()),
+		"go.logs.channel.enable": true, // handle kafka logs
 	}
 
 	p, err := kafka.NewProducer(&conf)
 	if err != nil {
 		log.Fatalf("kafka: create producer error: %s", err)
 	}
+
+	go KafkaLog(p.Logs())
 
 	return &producer{srv: p, Config: c}
 }

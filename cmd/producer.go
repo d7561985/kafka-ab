@@ -2,11 +2,13 @@ package cmd
 
 import (
 	"context"
-	"github.com/urfave/cli/v2"
-	conf_kafka "kafka-bench/adapter/conf-kafka"
-	super_producer "kafka-bench/usecase/super-producer"
 	"log"
 	"time"
+
+	conf_kafka "kafka-bench/adapter/conf-kafka"
+	super_producer "kafka-bench/usecase/super-producer"
+
+	"github.com/urfave/cli/v2"
 )
 
 type producerCMD struct{}
@@ -29,7 +31,7 @@ func (p *producerCMD) Command() *cli.Command {
 			},
 			&cli.StringFlag{
 				Name:    fKafkaServer,
-				Value:   "127.0.0.1:9094",
+				Value:   "PLAINTEXT://127.0.0.1:9094",
 				Aliases: []string{"srv"},
 				EnvVars: []string{KafkaBootstrap},
 			},
@@ -100,7 +102,7 @@ func (p *producerCMD) Action(c *cli.Context) error {
 	defer cancel()
 
 	defer func(start time.Time) {
-		log.Printf("duration: %s", time.Now().Sub(start))
+		log.Printf("duration: %s", time.Since(start))
 	}(time.Now())
 
 	go sp.Run(ctx)

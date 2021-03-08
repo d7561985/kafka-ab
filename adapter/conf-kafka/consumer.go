@@ -2,11 +2,12 @@ package conf_kafka
 
 import (
 	"context"
-	"github.com/confluentinc/confluent-kafka-go/kafka"
-	"github.com/icrowley/fake"
 	"kafka-bench/events"
 	"log"
 	"os"
+
+	"github.com/confluentinc/confluent-kafka-go/kafka"
+	"github.com/icrowley/fake"
 )
 
 type consumer struct {
@@ -33,12 +34,15 @@ func NewConsumer(c Config) *consumer {
 		"go.events.channel.enable":        true,
 		"go.application.rebalance.enable": true, // app rebalance
 		"enable.partition.eof":            true, // Enable generation of PartitionEOF when the end of a partition is reached.
+		"go.logs.channel.enable":          true, // handle kafka logs
 	}
 
 	p, err := kafka.NewConsumer(&conf)
 	if err != nil {
 		log.Fatalf("kafka:consumer start error: %s", err)
 	}
+
+	go KafkaLog(p.Logs())
 
 	return &consumer{srv: p, group: group}
 }
@@ -81,20 +85,25 @@ func (s *consumer) Subscribe(ctx context.Context, topic string) <-chan events.Ev
 			case m := <-s.srv.Events():
 				switch e := m.(type) {
 				case kafka.AssignedPartitions:
-					//log.Printf("AssignedPartitions: %s", m.String())
+					log.Printf("kafka.consumer AssignedPartitions: %s", m.String())
 
 					if err := s.srv.Assign(e.Partitions); err != nil {
-						log.Printf("a err: %s", err)
+						log.Printf("kafka.consumer assign partition err: %s", err)
 					}
 				case kafka.RevokedPartitions:
-					//log.Printf("RevokedPartitions")
+					log.Printf("kafka.consumer RevokedPartitions: %s", m.String())
 
 					if err := s.srv.Unassign(); err != nil {
-						log.Printf("unsign error:%s", err)
+						log.Printf("kafka.consumer unsign partition error:%s", err)
 					}
 				case kafka.Error:
-					// Errors should generally be considered as informational, the client will try to automatically recover
-					log.Printf("KafkaConsumer: Error: %v: %v\n", e.Code(), e)
+					if checkFatalKafka(e.Code()) {
+						log.Fatalf("kafka.consumer fatal error: %s", e.String())
+					} else {
+						// Errors should generally be considered as informational, the client will try to automatically recover
+						log.Printf("kafka.consumer error: %v: %s", e.Code(), e.String())
+					}
+
 				case *kafka.Message:
 					res <- events.EventResponse{
 						Key:   string(e.Key),
@@ -103,11 +112,16 @@ func (s *consumer) Subscribe(ctx context.Context, topic string) <-chan events.Ev
 				default:
 					//fmt.Println("unhandled event", m)
 				}
-			default:
-				//fmt.Printf("%s\n", m.TopicPartition.String())
 			}
 		}
 	}()
 
 	return res
+}
+
+func checkFatalKafka(c kafka.ErrorCode) bool {
+	return c == kafka.ErrDestroy || c == kafka.ErrFail || c == kafka.ErrTransport || c == kafka.ErrCritSysResource ||
+		c == kafka.ErrResolve || c == kafka.ErrAllBrokersDown || c == kafka.ErrRetry || c == kafka.ErrFatal ||
+		c == kafka.ErrOffsetOutOfRange || c == kafka.ErrBrokerNotAvailable || c == kafka.ErrNetworkException ||
+		c == kafka.ErrOffsetNotAvailable || c == kafka.ErrPreferredLeaderNotAvailable || c == kafka.ErrGroupMaxSizeReached
 }

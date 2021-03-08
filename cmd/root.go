@@ -1,24 +1,40 @@
 package cmd
 
 import (
-	"github.com/urfave/cli/v2"
+	"context"
 	"os"
+	"os/signal"
+	"syscall"
+
+	"github.com/urfave/cli/v2"
 )
 
 func Start() error {
 	app := &cli.App{
-		Name:  "Kafka bench",
-		Usage: "Produce huge data and try it consume",
+		Name:  "Kafka-ab",
+		Usage: "Helps to check slo for kafka as consumer or producer with different requirement to topic kind and producer options.",
 		Commands: []*cli.Command{
 			ConsumerCMD(),
 			ProducerCMD(),
 		},
 	}
 
-	err := app.Run(os.Args)
+	ctx, cancel := context.WithCancel(context.Background())
+	go signalListener(cancel)
+
+	err := app.RunContext(ctx, os.Args)
 	if err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func signalListener(cancel func()) {
+	defer cancel()
+
+	ch := make(chan os.Signal, 1)
+	signal.Notify(ch, os.Interrupt, syscall.SIGTERM)
+
+	<-ch
 }

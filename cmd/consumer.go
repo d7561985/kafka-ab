@@ -1,10 +1,11 @@
 package cmd
 
 import (
-	"github.com/urfave/cli/v2"
 	conf_kafka "kafka-bench/adapter/conf-kafka"
 	"kafka-bench/events"
 	super_consumer "kafka-bench/usecase/super-consumer"
+
+	"github.com/urfave/cli/v2"
 )
 
 type consumerCMD struct{}
@@ -27,7 +28,7 @@ func (c *consumerCMD) Command() *cli.Command {
 			},
 			&cli.StringFlag{
 				Name:    fKafkaServer,
-				Value:   "127.0.0.1:9094",
+				Value:   "PLAINTEXT://127.0.0.1:9094",
 				EnvVars: []string{KafkaBootstrap},
 			},
 			&cli.IntFlag{
