@@ -6,4 +6,5 @@ type Config struct {
 	BootStrap string
 	TimeOut   time.Duration
 	Verbosity int
+	ForceName string
 }

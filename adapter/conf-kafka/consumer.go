@@ -23,6 +23,9 @@ func NewConsumer(c Config) *consumer {
 	}
 
 	group := fake.FullName()
+	if len(c.ForceName) > 0 {
+		group = c.ForceName
+	}
 
 	conf := kafka.ConfigMap{
 		"bootstrap.servers":               c.BootStrap,

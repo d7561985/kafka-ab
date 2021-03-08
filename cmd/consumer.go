@@ -61,7 +61,12 @@ func (c *consumerCMD) Command() *cli.Command {
 				Value:       0,
 				DefaultText: "How much troubleshooting info to print",
 			},
-			// ToDo: force name (all consumer's groups have the same name)
+			&cli.StringFlag{
+				Name:        fForceName,
+				EnvVars:     []string{ForceName},
+				Value:       "",
+				DefaultText: "all consumer's groups have the same group name which pass throughout",
+			},
 			// ToDo: static group name (all consumer's groups hase unique but static name (group-1, group-2 and group-...))
 			// ToDo: auto-commit
 		},
@@ -79,6 +84,7 @@ func (c *consumerCMD) Action(root *cli.Context) error {
 		e := conf_kafka.NewConsumer(conf_kafka.Config{
 			BootStrap: root.String(fKafkaServer),
 			Verbosity: root.Int(fVerbosity),
+			ForceName: root.String(fForceName),
 		}).Subscribe(ctx, root.String(fTopic))
 		list = append(list, e)
 	}

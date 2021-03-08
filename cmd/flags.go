@@ -9,4 +9,5 @@ const (
 	fTimeLimit   = "timelimit"
 	fTimeOut     = "timeout"
 	fVerbosity   = "verbosity"
+	fForceName   = "force-name"
 )
