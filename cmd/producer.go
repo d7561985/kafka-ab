@@ -53,7 +53,6 @@ func (p *producerCMD) Command() *cli.Command {
 				Name:        fRequests,
 				Aliases:     []string{"n"},
 				DefaultText: "Number of requests to perform/consume",
-				Usage:       "require duration postfix: s - seconds, h - hours and etc",
 				EnvVars:     []string{Requests},
 				Value:       0,
 			},
@@ -70,6 +69,7 @@ func (p *producerCMD) Command() *cli.Command {
 				EnvVars:     []string{TimeOut},
 				Aliases:     []string{"s"},
 				Value:       time.Second * 30,
+				Usage:       "require duration postfix: s - seconds, h - hours and etc",
 				DefaultText: "Seconds to max. wait for each response",
 			},
 			&cli.IntFlag{
@@ -89,10 +89,12 @@ func (p *producerCMD) Action(c *cli.Context) error {
 		Verbosity: c.Int(fVerbosity),
 	})
 
+	requests := c.Int(fRequests)
+
 	sp := super_producer.New(e, super_producer.Config{
 		Topic:       c.String(fTopic),
 		Concurrency: c.Int(fConcurrency),
-		Requests:    c.Int(fRequests),
+		Requests:    requests,
 		TimeOut:     c.Duration(fTimeOut),
 		Verbosity:   c.Int(fVerbosity),
 		WindowSize:  c.Int(fWindowSize),
@@ -109,7 +111,12 @@ func (p *producerCMD) Action(c *cli.Context) error {
 
 	select {
 	case <-ctx.Done(): // timeout
-		log.Fatalf("timeout reached")
+		if requests > 0 {
+			// not meat target
+			log.Fatalf("timeout reached")
+		} else {
+			log.Println("operation completed without issues")
+		}
 	case <-c.Done(): // signal ok
 		log.Println("termination request")
 	case <-sp.Done(): // app finished

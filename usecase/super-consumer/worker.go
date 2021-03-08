@@ -3,32 +3,33 @@ package super_consumer
 import (
 	"context"
 	"kafka-bench/events"
-	"log"
-	"time"
 )
 
 type worker struct {
 	idx   int
-	size  *uint
 	event <-chan events.EventResponse
-	debug bool
+
+	// i use non-buffered channel because i need to be aware that we read exact num what we expect
+	// it's possible to read more that expected also in some cases, but now i think it's applicable
+	size chan uint
+}
+
+func newWorker(i int, e <-chan events.EventResponse) *worker {
+	return &worker{
+		idx:   i,
+		event: e,
+		size:  make(chan uint),
+	}
 }
 
 func (c *worker) work(ctx context.Context) {
-	ok := false
-
 	for {
 		select {
 		case <-ctx.Done():
+			close(c.size)
 			return
-		case <-time.After(time.Minute):
-			if !ok && c.debug {
-				log.Printf("consumer[%d] no work", c.idx)
-			}
-			ok = false
 		case r := <-c.event:
-			*c.size += uint(len(r.Value))
-			ok = true
+			c.size <- uint(len(r.Value))
 		}
 	}
 }
