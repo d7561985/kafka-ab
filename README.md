@@ -6,6 +6,35 @@
 ## usage
 application follows the best CLI practises, so it contains help information about environment, supported, etc.
 
+### Consumer
+```bash
+OPTIONS:
+   --topic value                 (default: "my-topic") [$TOPIC]
+   --kafka-server value          (default: "PLAINTEXT://127.0.0.1:9094") [$KAFKA_SERVER]
+   --concurrency value           (default: 10) [$CONCURRENCY]
+   --timelimit value, -t value   Stop all tasks instantly. In case of desired request not reach will exist with status 1  (default: Seconds to max. to spend on benchmarking.) [$TIME_LIMIT]
+   --requests value, -n value    require duration postfix: s - seconds, h - hours and etc (default: Number of requests to perform/consume) [$REQUESTS]
+   --verbosity value, -v value   (default: How much troubleshooting info to print) [$VERBOSITY]
+   --force-name value, -f value  (default: all consumer's groups have the same group name which pass throughout) [$FORCE_NAME]
+   --static, -s                  (default: all consumer's groups hase unique but static name (group-1, group-2 and group-...) [$STATIC]
+   --auto, -a                    (default: auto-commit option) [$AUTO_COMMIT]
+   --earliest, -e                (default: read from the very beginning of log) [$EARLIEST]
+   --help, -h                    show help (default: false)
+```
+
+### Produccer
+```bash
+OPTIONS:
+   --topic value                      (default: "my-topic") [$TOPIC]
+   --kafka-server value, --srv value  (default: "PLAINTEXT://127.0.0.1:9094") [$KAFKA_SERVER]
+   --windowsize value, -b value       Size of message send/receive buffer, in bytes (default: 1024) [$WINDOW_SIZE]
+   --concurrency value, -c value      (default: Number of multiple requests to make/read at a time) [$CONCURRENCY]
+   --requests value, -n value         (default: Number of requests to perform/consume) [$REQUESTS]
+   --timelimit value, -t value        Stop all tasks instantly. In case of desired request not reach will exist with status 1  (default: Seconds to max. to spend on benchmarking.) [$TIME_LIMIT]
+   --timeout value, -s value          require duration postfix: s - seconds, h - hours and etc (default: Seconds to max. wait for each response) [$TIME_OUT]
+   --verbosity value, -v value        (default: How much troubleshooting info to print) [$VERBOSITY]
+   --help, -h                         show help (default: false)
+```
 ### go run / build / install
 ```bash
 $ go run main.go c --topic my-topic --kafka-server 127.0.0.1:9094 --threads 10
