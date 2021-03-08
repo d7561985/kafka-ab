@@ -40,10 +40,17 @@ OPTIONS:
 $ go run main.go c --topic my-topic --kafka-server 127.0.0.1:9094 --threads 10
 ```
 
-### docker image
+### docker image 
 ```bash
-$ kubectl -n global run consumer --image d7561985/kafka-bench:v1.0.0 --env KAFKA_SERVER=my-cluster-kafka-external-bootstrap:9094 -it --rm  c
-$ kubectl -n global run producer --image d7561985/kafka-bench:v1.0.0 --env KAFKA_SERVER=my-cluster-kafka-external-bootstrap:9094 -it --rm  p
+$ docker run --rm -it d7561985/kafka-ab:v1.0.0 -kafka-server PLAINTEXT://host.docker.internal:9094 consumer
+
+$ docker run --rm -it -e KAFKA_SERVER=PLAINTEXT://host.docker.internal:9094 d7561985/kafka-ab:v1.0.0  producer
+```
+
+#### K8s
+```bash
+$ kubectl -n global run consumer --image d7561985/kafka-ab:v1.0.0 --env KAFKA_SERVER=my-cluster-kafka-external-bootstrap:9094 -it --rm  c
+$ kubectl -n global run producer --image d7561985/kafka-ab:v1.0.0 --env KAFKA_SERVER=my-cluster-kafka-external-bootstrap:9094 -it --rm  p
 ```
 
 ### from what to start
