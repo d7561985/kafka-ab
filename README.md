@@ -6,6 +6,10 @@
 ## usage
 application follows the best CLI practises, so it contains help information about environment, supported, etc.
 
+## install
+```bash
+  go install github.com/d7561985/kafka-ab@latest
+```
 ### Consumer
 ```bash
 OPTIONS:
