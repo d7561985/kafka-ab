@@ -2,12 +2,12 @@ package cmd
 
 import (
 	"context"
-	conf_kafka "kafka-bench/adapter/conf-kafka"
-	"kafka-bench/events"
-	super_consumer "kafka-bench/usecase/super-consumer"
 	"log"
 	"time"
 
+	conf_kafka "github.com/d7561985/kafka-ab/adapter/conf-kafka"
+	"github.com/d7561985/kafka-ab/events"
+	super_consumer "github.com/d7561985/kafka-ab/usecase/super-consumer"
 	"github.com/urfave/cli/v2"
 )
 

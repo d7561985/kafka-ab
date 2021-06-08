@@ -22,7 +22,7 @@ OPTIONS:
    --help, -h                    show help (default: false)
 ```
 
-### Produccer
+### Producer
 ```bash
 OPTIONS:
    --topic value                      (default: "my-topic") [$TOPIC]

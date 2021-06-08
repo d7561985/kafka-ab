@@ -2,13 +2,14 @@ package super_consumer
 
 import (
 	"context"
-	"kafka-bench/events"
-	human_readable "kafka-bench/internal/human-readable"
-	"kafka-bench/usecase"
 	"log"
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"github.com/d7561985/kafka-ab/events"
+	human_readable "github.com/d7561985/kafka-ab/internal/human-readable"
+	"github.com/d7561985/kafka-ab/usecase"
 )
 
 type consumer struct {

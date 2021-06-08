@@ -2,7 +2,8 @@ package usecase
 
 import (
 	"context"
-	"kafka-bench/events"
+
+	"github.com/d7561985/kafka-ab/events"
 )
 
 type SuperConsumer interface {

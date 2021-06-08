@@ -4,12 +4,13 @@ import (
 	"context"
 	"crypto/rand"
 	"fmt"
-	"kafka-bench/adapter"
-	human_readable "kafka-bench/internal/human-readable"
 	"log"
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"github.com/d7561985/kafka-ab/adapter"
+	human_readable "github.com/d7561985/kafka-ab/internal/human-readable"
 
 	"github.com/icrowley/fake"
 )

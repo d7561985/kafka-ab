@@ -3,9 +3,10 @@ package conf_kafka
 import (
 	"context"
 	"fmt"
-	"kafka-bench/events"
 	"log"
 	"os"
+
+	"github.com/d7561985/kafka-ab/events"
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/icrowley/fake"

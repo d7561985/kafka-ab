@@ -20,4 +20,3 @@ func ByteCountSI(b int64) string {
 	return fmt.Sprintf("%.1f %cB",
 		float64(b)/float64(div), "kMGTPE"[exp])
 }
-

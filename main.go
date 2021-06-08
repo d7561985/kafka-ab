@@ -1,8 +1,9 @@
 package main
 
 import (
-	"kafka-bench/cmd"
 	"log"
+
+	"github.com/d7561985/kafka-ab/cmd"
 )
 
 func main() {

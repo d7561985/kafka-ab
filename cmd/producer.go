@@ -5,8 +5,8 @@ import (
 	"log"
 	"time"
 
-	conf_kafka "kafka-bench/adapter/conf-kafka"
-	super_producer "kafka-bench/usecase/super-producer"
+	conf_kafka "github.com/d7561985/kafka-ab/adapter/conf-kafka"
+	super_producer "github.com/d7561985/kafka-ab/usecase/super-producer"
 
 	"github.com/urfave/cli/v2"
 )

@@ -2,8 +2,9 @@ package conf_kafka
 
 import (
 	"fmt"
-	"kafka-bench/adapter"
 	"log"
+
+	"github.com/d7561985/kafka-ab/adapter"
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 )

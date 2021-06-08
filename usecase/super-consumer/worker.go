@@ -2,7 +2,8 @@ package super_consumer
 
 import (
 	"context"
-	"kafka-bench/events"
+
+	"github.com/d7561985/kafka-ab/events"
 )
 
 type worker struct {
