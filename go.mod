@@ -1,6 +1,6 @@
 module github.com/d7561985/kafka-ab
 
-go 1.15
+go 1.17
 
 require (
 	github.com/confluentinc/confluent-kafka-go v1.5.2

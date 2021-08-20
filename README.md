@@ -53,8 +53,9 @@ $ docker run --rm -it -e KAFKA_SERVER=PLAINTEXT://host.docker.internal:9094 d756
 
 #### K8s
 ```bash
-$ kubectl -n global run consumer --image d7561985/kafka-ab:v1.0.0 --env KAFKA_SERVER=my-cluster-kafka-external-bootstrap:9094 -it --rm  c
-$ kubectl -n global run producer --image d7561985/kafka-ab:v1.0.0 --env KAFKA_SERVER=my-cluster-kafka-external-bootstrap:9094 -it --rm  p
+$ kubectl run producer --image d7561985/kafka-ab:v1.0.2 --env KAFKA_SERVER=my-cluster-kafka-external-bootstrap:9094 --restart=Never -it --rm -- p -h
+
+$ kubectl run producer --image d7561985/kafka-ab:v1.0.2 --env KAFKA_SERVER=my-cluster-kafka-external-bootstrap:9094 --restart=Never -it --rm -- c -h
 ```
 
 ### from what to start
@@ -86,3 +87,9 @@ For example: consumer don't read any message or consumer not reads desired reque
 * Concurrent (`--concurrency`) consumer with the force name (`--force-name`) - one group reads from different  partitions
 * `--static` every run consumers will have the same name. This helps to check auto-commit option for example
 * ` --earliest` option allow to deside do you need read from the start of just new income. Set false to read new income only. 
+
+
+```bash
+kubectl port-forward service/grafana -n global 3000:3000
+kubectl -n global port-forward svc/kafka-cluster-strimzi-helm-kafka-external-bootstrap 9094:9094
+```
