@@ -1,3 +1,4 @@
+[![Docker Image CI](https://github.com/d7561985/kafka-ab/actions/workflows/docker-image.yml/badge.svg)](https://github.com/d7561985/kafka-ab/actions/workflows/docker-image.yml)
 # Kafka-AB
 `Producer` helps produce a big number of system messages simultaneously to all partitions. Every message waits response with successful emitting to broker.
 
