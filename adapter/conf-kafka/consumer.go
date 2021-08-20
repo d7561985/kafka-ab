@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"os"
 
 	"github.com/d7561985/kafka-ab/events"
 
@@ -19,19 +18,9 @@ type consumer struct {
 }
 
 func NewConsumer(i int, c Config) *consumer {
-	var instanceID string
-
-	host, err := os.Hostname()
-	if err != nil {
-		host = "common"
-	}
-
 	group := fake.FullName()
 	if len(c.ForceName) > 0 {
 		group = c.ForceName
-		instanceID = fake.FullName()
-	} else {
-		instanceID = host
 	}
 
 	if c.StaticGroupName {
@@ -47,7 +36,6 @@ func NewConsumer(i int, c Config) *consumer {
 		"bootstrap.servers":               c.BootStrap,
 		"session.timeout.ms":              6000,
 		"group.id":                        group,
-		"group.instance.id":               instanceID,
 		"auto.offset.reset":               offset,
 		"enable.auto.commit":              c.AutoCommit,
 		"go.events.channel.enable":        true,

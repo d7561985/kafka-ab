@@ -31,6 +31,7 @@ func (c *consumerCMD) Command() *cli.Command {
 			},
 			&cli.StringFlag{
 				Name:    fKafkaServer,
+				Aliases: []string{"srv"},
 				Value:   "PLAINTEXT://127.0.0.1:9094",
 				EnvVars: []string{KafkaBootstrap},
 			},
